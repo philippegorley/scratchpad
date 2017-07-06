@@ -8,6 +8,6 @@ void function_which_allocates(void) {
 
 int main(void) {
     function_which_allocates();
-    
+
     return 0;
 }
