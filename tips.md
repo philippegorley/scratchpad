@@ -5,6 +5,12 @@
 3. PATH="/tmp/my-android-toolchain/bin:${PATH}" make -j4
 
 
+# Linker
+
+- C++ needs `extern "C"` to include C headers
+- C++ supports function overloading, C doesn't; this can lead to undefined references if not careful
+
+
 # LD_PRELOAD
 
 Replace function with own implementation.
