@@ -44,3 +44,7 @@ void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
     (*original_mmap)(addr, length, prot, flags, fd, offset);
 }
 ```
+
+
+# Benchmark FFmpeg decoder
+time ffmpeg -threads [thread number] -c:v [decoder name] -i ~/Videos/bunny.webm /tmp/out.yuv
