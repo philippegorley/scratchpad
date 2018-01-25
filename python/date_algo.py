@@ -1,4 +1,4 @@
-// source: https://alcor.concordia.ca/~gpkatch/gdate-method.html
+# source: https://alcor.concordia.ca/~gpkatch/gdate-method.html
 
 def g(y,m,d):
     m = (m + 9) % 12
