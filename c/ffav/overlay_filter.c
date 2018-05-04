@@ -17,7 +17,7 @@
 #define FRAME_WIDTH 1280
 #define FRAME_HEIGHT 720
 #define FRAME_FORMAT AV_PIX_FMT_YUV420P
-#define FRAME_COUNT 100
+#define FRAME_COUNT 25
 #define OUTPUT_FILE "output.yuv"
 
 typedef struct FilteringContext {
@@ -97,7 +97,7 @@ static AVFrame *get_dummy_frame(int width, int height, int frame_index, int valu
     return frame;
 }
 
-AVFrame *read_input_pad(FilteringContext *fc, AVFilterContext *fctx)
+AVFrame *read_input(FilteringContext *fc, AVFilterContext *fctx)
 {
     // need info to init filters, return a frame that has this info set
     (void)fc;
@@ -108,7 +108,7 @@ AVFrame *read_input_pad(FilteringContext *fc, AVFilterContext *fctx)
 static int init_input_filter(FilteringContext *fc, AVFilterInOut *in)
 {
     int ret = 0;
-    AVFrame *frame = read_input_pad(fc, in->filter_ctx);
+    AVFrame *frame = read_input(fc, in->filter_ctx);
     if (!frame)
         return AVERROR(EAGAIN);
 
@@ -137,6 +137,7 @@ static int init_input_filter(FilteringContext *fc, AVFilterInOut *in)
         printf("Only video and audio filters are supported\n");
         return AVERROR(EINVAL);
     }
+    av_frame_free(&frame);
 
     const AVFilter *filter = avfilter_get_by_name(filter_name);
     AVFilterContext *buffersrc_ctx = NULL;
@@ -280,8 +281,10 @@ static int feed_input(FilteringContext *fc, int eof, int frame_index)
     int ret = 0;
     for (int i = 0; i < fc->nb_inputs; ++i) {
         int requested = av_buffersrc_get_nb_failed_requests(fc->inputs[i]);
-        if (requested > 0)
-            read_input_pad(fc, fc->inputs[i]);
+        if (requested > 0) {
+            AVFrame *dummy = read_input(fc, fc->inputs[i]);
+            av_frame_free(&dummy);
+        }
 
         AVFrame *frame = NULL;
         if (!eof)
@@ -290,6 +293,7 @@ static int feed_input(FilteringContext *fc, int eof, int frame_index)
             printf("Could not pass frame to filter chain: %s\n", av_err2str(ret));
             return ret;
         }
+        av_frame_free(&frame);
     }
     return ret;
 }
