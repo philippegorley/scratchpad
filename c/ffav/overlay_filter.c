@@ -97,7 +97,7 @@ static AVFrame *get_dummy_frame(int width, int height, int frame_index, int valu
     return frame;
 }
 
-AVFrame *read_input(FilteringContext *fc, AVFilterContext *fctx)
+static AVFrame *read_input(FilteringContext *fc, AVFilterContext *fctx)
 {
     // need info to init filters, return a frame that has this info set
     (void)fc;
@@ -128,7 +128,7 @@ static int init_input_filter(FilteringContext *fc, AVFilterInOut *in)
         params->frame_rate.den = 1;
         filter_name = "buffer";
     } else if (type == AVMEDIA_TYPE_AUDIO) {
-        params->format = AV_SAMPLE_FMT_S16;
+        params->format = frame->format;
         params->time_base = AV_TIME_BASE_Q;
         params->sample_rate = frame->sample_rate;
         params->channel_layout = frame->channel_layout;

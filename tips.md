@@ -1,3 +1,18 @@
+# test eax eax
+
+TEST sets the zero flag, ZF, when the result of the AND operation is zero.
+If two operands are equal, their bitwise AND is zero when both are zero.
+TEST also sets the sign flag, SF, when the most significant bit is set in the result, and the parity flag, PF, when the number of set bits is even.
+
+A subsequent JE will jump if eax is zero.
+
+
+# Copy file to qemu guest
+
+Start guest with -redir option: `qemu-system-x86_64 -hda hdd.qcow2 -m 256 -redir tcp:8022::22`
+Copy file: `scp -P 8022 filename username@localhost:~`
+
+
 # Cross compile ffmpeg for android
 
 1. $ANDROID_NDK/build/tools/make_standalone_toolchain.py --arch=arm --api=18 --install-dir /tmp/my-android-toolchain
